@@ -2,9 +2,17 @@ body {
     margin: 0px;
 }
 
+body:hover .ql-toolbar {
+    opacity: 1;
+}
+
 .ql-container {
     height: calc(100% - 47px);
     font-size: 100%;
+}
+
+.ql-container.ql-snow {
+    border: none;
 }
 
 .ql-editor {
@@ -22,6 +30,9 @@ body {
     height: 47px;
     overflow: auto;
     white-space: nowrap;
+
+    opacity: 0;
+    transition: opacity 1s;
 }
 
 .ql-snow.ql-toolbar button, .ql-snow .ql-toolbar button {
