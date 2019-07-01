@@ -1,0 +1,39 @@
+body {
+    margin: 0px;
+}
+
+.ql-container {
+    height: calc(100% - 47px);
+    font-size: 100%;
+}
+
+.ql-editor {
+    padding: 12px 12px;
+}
+
+.ql-editor ol,
+.ql-editor ul {
+    padding-left: 0em;
+}
+
+.ql-toolbar {
+    position: relative;
+
+    height: 47px;
+    overflow: auto;
+    white-space: nowrap;
+}
+
+.ql-snow.ql-toolbar button, .ql-snow .ql-toolbar button {
+    float: none;
+}
+
+::-webkit-scrollbar {
+    height: 5px;
+    width: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: SlateGray; 
+  border-radius: 10px;
+}

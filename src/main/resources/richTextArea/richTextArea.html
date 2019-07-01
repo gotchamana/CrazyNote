@@ -1,24 +1,46 @@
+<meta charset="utf-8" >
+
+<!-- Include syntax theme -->
+<link rel="stylesheet" href="monokai-sublime.min.css" />
+
 <!-- Include stylesheet -->
-<link href="quill.bubble.css" rel="stylesheet">
+<link href="quill.snow.css" rel="stylesheet">
 
-<!-- Override the default bubble theme -->
-<style type="text/css" media="screen">
-    .ql-editor {
-        padding: 0px;
-    }
+<!-- Override the default snow theme -->
+<link href="richTextArea.css" rel="stylesheet">
 
-    .ql-editor ol,
-    .ql-editor ul {
-        padding-left: 0em;
-    }
-</style>
+<!-- Create the text area container -->
+<div id="textarea"></div>
+
+<!-- Create the toolbar container -->
+<div id="toolbar">
+    <button class="ql-bold"></button><!--
+    --><button class="ql-italic"></button><!--
+    --><button class="ql-underline"></button><!--
+    --><button class="ql-strike"></button><!--
+
+    --><button class="ql-script" value="sub"></button><!--
+    --><button class="ql-script" value="super"></button><!--
+
+    --><button class="ql-blockquote"></button><!--
+    --><button class="ql-code-block"></button><!--
+
+    --><button class="ql-list" value="ordered"></button><!--
+    --><button class="ql-list" value="bullet"></button><!--
+
+    --><button class="ql-indent" value="-1"></button><!--
+    --><button class="ql-indent" value="+1"></button><!--
+
+    --><button class="ql-image"></button><!--
+
+    --><button class="ql-clean"></button>
+</div>
+
+<!-- Include the syntax highlight library -->
+<script src="highlight.min.js"></script>
 
 <!-- Include the Quill library -->
 <script src="quill.min.js"></script>
-
-<!-- Create the editor container -->
-<div id="editor">
-</div>
 
 <!-- Initialize Quill editor -->
 <script src="richTextArea.js"></script>

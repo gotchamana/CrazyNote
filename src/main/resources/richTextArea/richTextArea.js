@@ -1,10 +1,14 @@
-var toolbarOptions = ['bold', 'italic', 'underline', 'strike', { 'color': [] }, { 'background': [] }, 'clean'];
-
-var quill = new Quill('#editor', {
+var quill = new Quill('#textarea', {
     modules: {
-        toolbar: toolbarOptions
+        toolbar: {
+            container: '#toolbar',
+            handlers: {
+                'image': uploadImage
+            }
+        },
+        syntax: true
     },
-    theme: 'bubble'
+    theme: 'snow'
 });
 
 function getQuill() {
@@ -18,4 +22,13 @@ function getContents() {
 
 function setContents(delta) {
     quill.setContents(JSON.parse(delta));
+}
+
+function uploadImage() {
+    var imageURI = textArea.uploadImage();
+    var range = quill.getSelection(true);
+
+    quill.deleteText(range.index, range.length, "user");
+    quill.insertEmbed(range.index, "image", imageURI, "user");
+    quill.setSelection(range.index + 1, "silent");
 }
