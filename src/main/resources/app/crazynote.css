@@ -1,7 +1,19 @@
+.menu-button {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
 .menu-button > .arrow-button {
     -fx-padding: 0;
 }
 
 .menu-button > .arrow-button > .arrow {
     -fx-padding: 0;
+}
+
+.menu-button:hover .ikonli-font-icon {
+    -fx-icon-color: #0066cc;
+}
+
+.title {
+    -fx-font-size: 16px;
 }

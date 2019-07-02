@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
@@ -16,7 +17,7 @@
       <WebView prefHeight="300.0" prefWidth="300.0" />
    </center>
    <top>
-      <GridPane alignment="CENTER">
+      <GridPane alignment="CENTER" styleClass="tool-bar">
          <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
             <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" />
@@ -33,7 +34,11 @@
                   <MenuItem mnemonicParsing="false" text="Hide" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" text="Rename" />
-                  <MenuItem mnemonicParsing="false" text="Select Color" />
+                  <Menu mnemonicParsing="false" text="Select Color">
+                    <items>
+                      <MenuItem mnemonicParsing="false" text="Yellow" />
+                    </items>
+                  </Menu>
                   <MenuItem mnemonicParsing="false" text="Setting" />
               </items>
             </MenuButton>

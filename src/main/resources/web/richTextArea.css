@@ -8,7 +8,7 @@ body:hover .ql-toolbar {
 
 .ql-container {
     height: calc(100% - 47px);
-    font-size: 100%;
+    font-size: 16px;
 }
 
 .ql-container.ql-snow {

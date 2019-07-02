@@ -9,7 +9,7 @@ repositories {
 
 dependencies {
     compile 'org.kordamp.ikonli:ikonli-javafx:11.3.4'
-    compile 'org.kordamp.ikonli:ikonli-material-pack:11.3.4'
+    compile 'org.kordamp.ikonli:ikonli-openiconic-pack:11.3.4'
 }
 
 mainClassName = 'crazynote.Main'
