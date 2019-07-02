@@ -1,16 +1,12 @@
 package crazynote;
 
-import javafx.scene.layout.Region;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
-import netscape.javascript.JSObject;
-import javafx.stage.FileChooser;
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Files;
-import java.io.BufferedInputStream;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.*;
 import java.util.Base64;
+import javafx.scene.layout.Region;
+import javafx.scene.web.*;
+import javafx.stage.FileChooser;
+import netscape.javascript.JSObject;
 
 public class RichTextArea extends Region {
     private WebView browser;
@@ -23,9 +19,10 @@ public class RichTextArea extends Region {
         browser.prefHeightProperty().bind(heightProperty());
 
         engine = browser.getEngine();
-        engine.load(getClass().getResource("/richTextArea/richTextArea.html").toExternalForm());
+        engine.load(getClass().getResource("/web/richTextArea.html").toExternalForm());
         engine.setJavaScriptEnabled(true);
 
+        // Pass the textarea reference to JavaScript
         JSObject window = (JSObject)engine.executeScript("window");
         window.setMember("textArea", this);
 
@@ -53,11 +50,7 @@ public class RichTextArea extends Region {
     }
 
     public String uploadImage() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Choose a image...");
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-        fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Image file", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.bmp"));
-
+        FileChooser fileChooser = createFileChooser();
         Path imagePath = fileChooser.showOpenDialog(null).toPath();
         String imageDataURI = null;
 
@@ -65,6 +58,7 @@ public class RichTextArea extends Region {
             byte[] byteArray = new byte[(int)Files.size(imagePath)];
             in.read(byteArray, 0, byteArray.length);
 
+            // Encode the image to data URI
             String imageMimeType = Files.probeContentType(imagePath);
             imageDataURI = "data:" + imageMimeType + ";base64," + Base64.getEncoder().encodeToString(byteArray);
 
@@ -73,6 +67,14 @@ public class RichTextArea extends Region {
         }
 
         return imageDataURI;
+    }
+
+    private FileChooser createFileChooser() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Choose a image...");
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Image file", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.bmp"));
+        return fileChooser;
     }
 
     public void log(Object obj) {

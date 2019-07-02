@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Bubble Theme - Quill Rich Text Editor</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="../quill.bubble.css" />
+    </head>
+
+    <body>
+
+        <div class="standalone-container">
+            <div id="bubble-container"></div>
+        </div>
+
+        <script src="../quill.min.js"></script>
+        <script>
+            var quill = new Quill('#bubble-container', {
+                placeholder: 'Compose an epic...',
+                theme: 'bubble'
+            });
+        </script>
+    </body>
+</html>
