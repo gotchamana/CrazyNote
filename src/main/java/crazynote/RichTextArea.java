@@ -26,7 +26,6 @@ public class RichTextArea extends Region {
         JSObject window = (JSObject)engine.executeScript("window");
         window.setMember("textArea", this);
 
-        setPrefSize(300, 300);
         getChildren().add(browser);
     }
 

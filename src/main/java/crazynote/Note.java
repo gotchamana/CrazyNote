@@ -49,13 +49,14 @@ public class Note extends Stage {
         this.owner = owner;
 
         root = new BorderPane();
+        root.setBackground(Background.EMPTY);
         initGUIComponent(root);
 
-        scene = new Scene(root);
+        scene = new Scene(root, 300, 300, Color.TRANSPARENT);
         scene.getStylesheets().add("/app/crazynote.css");
 
         initOwner(owner);
-        initStyle(StageStyle.UNDECORATED);
+        initStyle(StageStyle.TRANSPARENT);
         setScene(scene);
         ResizeHelper.addResizeListener(this);
     }
@@ -96,8 +97,6 @@ public class Note extends Stage {
 
         GridPane toolBar = new GridPane();
         toolBar.getStyleClass().add("tool-bar");
-        toolBar.setAlignment(Pos.CENTER);
-        toolBar.setPadding(new Insets(5.0, 5.0, 5.0, 12.0));
         toolBar.getColumnConstraints().addAll(col1, col2);
         toolBar.getRowConstraints().add(row);
 

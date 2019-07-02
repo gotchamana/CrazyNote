@@ -3,7 +3,7 @@ package crazynote;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
+import javafx.stage.*;
 
 public class Main extends Application {
 
@@ -13,6 +13,11 @@ public class Main extends Application {
         Scene scene = new Scene(root);
         stage.setTitle("Owner");
         stage.setScene(scene);
+
+        /* stage.initStyle(StageStyle.UTILITY);
+        stage.setMaxHeight(1);
+        stage.setMaxWidth(1);
+        stage.setX(Double.MAX_VALUE); */
         stage.show();
 
         Note note = new Note(stage);

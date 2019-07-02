@@ -14,10 +14,13 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="300.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <center>
-      <WebView prefHeight="300.0" prefWidth="300.0" />
+      <WebView prefHeight="300.0" prefWidth="300.0">
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin></WebView>
    </center>
    <top>
-      <GridPane alignment="CENTER" styleClass="tool-bar">
+      <GridPane styleClass="tool-bar">
          <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
             <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" />

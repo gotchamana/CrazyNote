@@ -1,3 +1,7 @@
+.root {
+    -fx-padding: 0 0 4 0;
+}
+
 .menu-button {
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
@@ -12,6 +16,10 @@
 
 .menu-button:hover .ikonli-font-icon {
     -fx-icon-color: #0066cc;
+}
+
+.tool-bar {
+    -fx-padding: 5 5 5 12;
 }
 
 .title {
