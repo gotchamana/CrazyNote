@@ -3,8 +3,8 @@ package crazynote;
 import dorkbox.systemTray.*;
 import javafx.application.*;
 import javafx.scene.Scene;
-import javafx.stage.*;
 import javafx.scene.control.Alert;
+import javafx.stage.*;
 
 public class Main extends Application {
 

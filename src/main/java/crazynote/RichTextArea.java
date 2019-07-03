@@ -3,6 +3,7 @@ package crazynote;
 import java.io.*;
 import java.nio.file.*;
 import java.util.Base64;
+import javafx.concurrent.Worker;
 import javafx.scene.layout.Region;
 import javafx.scene.web.*;
 import javafx.stage.FileChooser;
@@ -12,7 +13,7 @@ public class RichTextArea extends Region {
     private WebView browser;
     private WebEngine engine;
 
-    public RichTextArea() {
+    public RichTextArea(String contents) {
         browser = new WebView();
         browser.setContextMenuEnabled(false);
         browser.prefWidthProperty().bind(widthProperty());
@@ -21,6 +22,11 @@ public class RichTextArea extends Region {
         engine = browser.getEngine();
         engine.load(getClass().getResource("/web/richTextArea.html").toExternalForm());
         engine.setJavaScriptEnabled(true);
+        engine.getLoadWorker().stateProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue == Worker.State.SUCCEEDED) {
+                setContents(contents);
+            }
+        });
 
         // Pass the textarea reference to JavaScript
         JSObject window = (JSObject)engine.executeScript("window");

@@ -1,6 +1,10 @@
 package crazynote;
 
+import java.time.LocalDateTime;
+import javafx.application.Platform;
+import javafx.beans.property.*;
 import javafx.geometry.*;
+import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -13,11 +17,18 @@ import org.kordamp.ikonli.openiconic.Openiconic;
 
 public class Note extends Stage {
 
+    private LocalDateTime timestamp;
+    private String contents;
+    private SimpleObjectProperty<ColorTheme> colorThemeProperty;
+    private SimpleStringProperty titleProperty;
+    private SimpleBooleanProperty visibleProperty;
+    private Point2D position;
+
     private Window owner;
     private Scene scene;
     private BorderPane root;
     private GridPane toolBar;
-    private Label title;
+    private Label titleLabel;
     private MenuButton menu;
     private MenuItem newItem, deleteItem, hideItem, separator, renameItem, settingItem;
     private Menu colorMenu;
@@ -46,7 +57,17 @@ public class Note extends Stage {
     } 
 
     public Note(Window owner) {
+        this(owner, LocalDateTime.now(), "", "{\"ops\":[{\"insert\":\"Some Text\\\\n\"}]}", ColorTheme.YELLOW, true, null);
+    }
+
+    public Note(Window owner, LocalDateTime timestamp, String title, String contents, ColorTheme colorTheme, boolean isVisible, Point2D position) {
         this.owner = owner;
+        this.timestamp = timestamp;
+        titleProperty = new SimpleStringProperty(title);
+        this.contents = contents;
+        colorThemeProperty = new SimpleObjectProperty<>(colorTheme);
+        visibleProperty = new SimpleBooleanProperty(isVisible);
+        this.position = position;
 
         root = new BorderPane();
         root.getStyleClass().add("note");
@@ -58,6 +79,30 @@ public class Note extends Stage {
         initOwner(owner);
         initStyle(StageStyle.TRANSPARENT);
         setScene(scene);
+
+        if (position == null) {
+            centerOnScreen();
+        } else {
+            setX(position.getX());
+            setY(position.getY());
+        }
+
+        titleProperty.addListener((obs, oldValue, newValue) -> titleLabel.setText(newValue));
+
+        colorThemeProperty.addListener((obs, oldValue, newValue) -> {
+            scene.getStylesheets().remove(newValue.getCssFilePath());
+            scene.getStylesheets().add(newValue.getCssFilePath());
+            textArea.setBgColor(newValue.getCode2());
+        });
+
+        visibleProperty.addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                show();
+            } else {
+                close();
+            }
+        });
+
         ResizeHelper.addResizeListener(this);
     }
 
@@ -65,14 +110,14 @@ public class Note extends Stage {
         toolBar = createToolBar();
         root.setTop(toolBar);
 
-        title = new Label("Title");
-        title.getStyleClass().add("title");
-        toolBar.add(title, 0, 0);
+        titleLabel = new Label(titleProperty.get());
+        titleLabel.getStyleClass().add("title");
+        toolBar.add(titleLabel, 0, 0);
 
         menu = createMenu();
         toolBar.add(menu, 1, 0);
 
-        textArea = new RichTextArea();
+        textArea = new RichTextArea(contents);
         textArea.lookup(".web-view").focusedProperty().addListener((obs, oldValue, newValue) -> {
             if (!newValue) {
                 System.out.println("Save Content...");
@@ -125,21 +170,23 @@ public class Note extends Stage {
         deleteItem.setOnAction(e -> close());
 
         hideItem = new MenuItem("Hide");
-        hideItem.setOnAction(e -> close());
+        hideItem.setOnAction(e -> setVisible(false));
 
         separator = new SeparatorMenuItem();
 
         renameItem = new MenuItem("Rename");
         renameItem.setOnAction(e -> {
-            TextInputDialog dialog = new TextInputDialog();
-            dialog.initOwner(this);
-            dialog.initStyle(StageStyle.UTILITY);
-            dialog.setTitle("Name");
-            dialog.setHeaderText("Enter the name");
-            dialog.setGraphic(null);
+            Platform.runLater(() -> {
+                TextInputDialog dialog = new TextInputDialog();
+                dialog.initOwner(this);
+                dialog.initStyle(StageStyle.UTILITY);
+                dialog.setTitle("Name");
+                dialog.setHeaderText("Enter the name");
+                dialog.setGraphic(null);
 
-            String name = dialog.showAndWait().orElse("");
-            title.setText(name);
+                String title = dialog.showAndWait().orElse("");
+                setNoteTitle(title);
+            });
         });
 
         colorMenu = createColorMenu();
@@ -155,12 +202,12 @@ public class Note extends Stage {
     }
 
     private Menu createColorMenu() {
-        yellowTheme = createColorMenuItem("Yellow", "#ffeb85", "#fff3ac", "/app/theme/yellow.css");
-        greenTheme = createColorMenuItem("Green", "#b1eca6", "#cbf1c4", "/app/theme/green.css");
-        pinkTheme = createColorMenuItem("Pink", "#ffbbdd", "#ffcce5", "/app/theme/pink.css");
-        purpleTheme = createColorMenuItem("Purple", "#dbb7ff", "#e7cfff", "/app/theme/purple.css");
-        blueTheme = createColorMenuItem("Blue", "#b7dfff", "#cde9ff", "/app/theme/blue.css");
-        beigeTheme = createColorMenuItem("Beige", "#e5e5e5", "#f9f9f9", "/app/theme/beige.css");
+        yellowTheme = createColorMenuItem(ColorTheme.YELLOW);
+        greenTheme = createColorMenuItem(ColorTheme.GREEN);
+        pinkTheme = createColorMenuItem(ColorTheme.PINK);
+        purpleTheme = createColorMenuItem(ColorTheme.PURPLE);
+        blueTheme = createColorMenuItem(ColorTheme.BLUE);
+        beigeTheme = createColorMenuItem(ColorTheme.BEIGE);
 
         Menu colorMenu = new Menu("Select Color");
         colorMenu.getItems().addAll(yellowTheme, greenTheme, pinkTheme, purpleTheme, blueTheme, beigeTheme);
@@ -168,15 +215,25 @@ public class Note extends Stage {
         return colorMenu;
     }
 
-    private MenuItem createColorMenuItem(String color, String code1, String code2, String cssFilePath) {
-        MenuItem colorTheme = new MenuItem(color);
-        colorTheme.setGraphic(new Rectangle(48, 16, Color.web(code1)));
+    private MenuItem createColorMenuItem(ColorTheme theme) {
+        MenuItem colorTheme = new MenuItem(theme.toString());
+        colorTheme.setGraphic(new Rectangle(48, 16, Color.web(theme.getCode1())));
         colorTheme.setOnAction(e -> {
-            scene.getStylesheets().remove(cssFilePath);
-            scene.getStylesheets().add(cssFilePath);
-            textArea.setBgColor(code2);
+            setColorTheme(theme);
         });
 
         return colorTheme;
+    }
+
+    public void setNoteTitle(String title) {
+        titleProperty.set(title);
+    }
+
+    public void setColorTheme(ColorTheme theme) {
+        colorThemeProperty.set(theme);
+    }
+
+    public void setVisible(boolean isVisible) {
+        visibleProperty.set(isVisible);
     }
 }
