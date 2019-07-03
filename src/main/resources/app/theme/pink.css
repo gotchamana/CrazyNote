@@ -1,3 +1,7 @@
+.note {
+    -fx-background-color: #ffcce5;
+}
+
 .tool-bar {
     -fx-background-color: #ffbbdd;
 }

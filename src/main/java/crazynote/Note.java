@@ -4,11 +4,11 @@ import javafx.geometry.*;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.*;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.openiconic.Openiconic;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.paint.Color;
 
 
 public class Note extends Stage {
@@ -49,7 +49,7 @@ public class Note extends Stage {
         this.owner = owner;
 
         root = new BorderPane();
-        root.setBackground(Background.EMPTY);
+        root.getStyleClass().add("note");
         initGUIComponent(root);
 
         scene = new Scene(root, 300, 300, Color.TRANSPARENT);
