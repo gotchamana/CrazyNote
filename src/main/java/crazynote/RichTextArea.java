@@ -13,7 +13,7 @@ public class RichTextArea extends Region {
     private WebView browser;
     private WebEngine engine;
 
-    public RichTextArea(String contents) {
+    public RichTextArea(String contents, ColorTheme colorTheme) {
         browser = new WebView();
         browser.setContextMenuEnabled(false);
         browser.prefWidthProperty().bind(widthProperty());
@@ -25,6 +25,7 @@ public class RichTextArea extends Region {
         engine.getLoadWorker().stateProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue == Worker.State.SUCCEEDED) {
                 setContents(contents);
+                setBgColor(colorTheme.getCode2());
             }
         });
 
