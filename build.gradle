@@ -1,5 +1,4 @@
 plugins {
-    // id 'java'
     id 'application'
     id "org.jetbrains.kotlin.jvm" version "1.3.40"
 }
@@ -9,9 +8,6 @@ repositories {
 }
 
 dependencies {
-    /* compile 'org.kordamp.ikonli:ikonli-javafx:11.3.4'
-    compile 'org.kordamp.ikonli:ikonli-openiconic-pack:11.3.4' */
-
     compile "org.jetbrains.kotlin:kotlin-stdlib"
     compile 'org.kordamp.ikonli:ikonli-javafx:1.8.0'
     compile 'org.kordamp.ikonli:ikonli-openiconic-pack:1.8.0'
@@ -19,6 +15,20 @@ dependencies {
     compile 'org.slf4j:slf4j-log4j12:1.6.6'
     compile 'log4j:log4j:1.2.16'
     compile 'com.dorkbox:SystemTray:3.17'
+}
+
+/* tasks.withType(JavaCompile) {
+    options.compilerArgs += ['-Xlint:unchecked']
+} */
+
+jar {
+    manifest {
+        attributes "Main-Class": "crazynote.Main"
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }
 
 mainClassName = 'crazynote.Main'

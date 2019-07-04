@@ -56,8 +56,8 @@ public class Main extends Application {
             Platform.runLater(() -> new Note(stage).show());
         }));
 
-        mainMenu.add(new MenuItem("Setting", e -> {
-            Platform.runLater(() -> System.out.println("Setting"));
+        mainMenu.add(new MenuItem("Manage", e -> {
+            Platform.runLater(() -> System.out.println("Manage"));
         }));
 
         mainMenu.add(new MenuItem("About", e -> {

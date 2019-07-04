@@ -13,7 +13,7 @@ class DropDownMenu: MenuButton() {
     val hideItem: MenuItem = MenuItem("Hide")
     val separator: MenuItem = SeparatorMenuItem()
     val renameItem: MenuItem = MenuItem("Rename")
-    val settingItem: MenuItem = MenuItem("Setting")
+    val settingItem: MenuItem = MenuItem("Manage")
 
     val colorMenu: Menu = Menu("Select Color")
     val yellowTheme: MenuItem = ColorMenuItem(ColorTheme.YELLOW)
