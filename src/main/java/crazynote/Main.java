@@ -5,6 +5,7 @@ import javafx.application.*;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.*;
+import org.apache.log4j.BasicConfigurator;
 
 public class Main extends Application {
 
@@ -13,14 +14,20 @@ public class Main extends Application {
         initSystemTray(stage);
         hidePrimaryStage(stage);
 
-        Note note = new Note(stage);
-        note.show();
+        FileUtil.getNoteDatas()
+            .stream()
+            .filter(NoteData::isVisible)
+            .map(data -> new Note(stage, data))
+            .forEach(Stage::show);
     }
 
     public static void main(String[] args) {
         // Improve font rendering for Linux
         System.setProperty("prism.lcdtext", "false");
         System.setProperty("prism.text", "t2k");
+
+        // Configure log4j
+        BasicConfigurator.configure();
 
         launch(args);
     }

@@ -1,52 +1,45 @@
 package crazynote
 
+import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import javafx.application.Platform;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.paint.Color;
 import javafx.stage.*;
 import kotlin.properties.Delegates;
-import javafx.geometry.Rectangle2D;
 
-class Note(_owner: Window, val timestamp: LocalDateTime, _title: String, _contents: String, _colorTheme: ColorTheme, _isVisible: Boolean, _position: Pair<Double, Double>, _width: Double, _height: Double): Stage() {
+class Note @JvmOverloads constructor(_owner: Window, val noteData: NoteData = NoteData()): Stage(StageStyle.TRANSPARENT) {
 
-    constructor(_owner: Window): this(_owner, LocalDateTime.now(), "Title", "{\"ops\":[{\"insert\":\"Some Text\\\\n\"}]}", ColorTheme.YELLOW, true, getScreenCnenter(300.0, 300.0), 300.0, 300.0)
-
-    val contents: String 
-        get() = root.textArea.contents
-
-    var colorTheme: ColorTheme by Delegates.observable(_colorTheme) {
-        _, oldColorTheme, newColorTheme ->
+    private var colorTheme: ColorTheme by Delegates.observable(noteData.colorTheme) {
+        _, _, newColorTheme ->
         scene.getStylesheets().remove(newColorTheme.cssFilePath)
         scene.getStylesheets().add(newColorTheme.cssFilePath)
         root.textArea.setBgColor(newColorTheme.code2)
 
         // If the note's color theme was changed, then save file
-        saveNoteState("Color Theme", oldColorTheme, newColorTheme)
+        saveNoteData("ColorTheme", newColorTheme, ColorTheme::class.java)
     }
 
-    var isVisible: Boolean by Delegates.observable(_isVisible) {
-        _, oldIsVisible, newIsVisible ->
-        if(newIsVisible) show() else close()
+    private var isVisible: Boolean by Delegates.observable(noteData.isVisible) {
+        _, _, newVisible ->
+        if(newVisible) show() else close()
 
         // If the note's visibility was changed, then save file
-        saveNoteState("Visibility", oldIsVisible, newIsVisible)
+        saveNoteData("Visible", newVisible, Boolean::class.java)
     }
-
-    val position: Pair<Double, Double>
-        get() = Pair(x, y)
 
     private val root: NotePane
 
     init {
-        root = NotePane(_title, _contents, _colorTheme)
+        root = NotePane(noteData.title, noteData.contents, noteData.colorTheme)
         root.getStyleClass().add("note")
 
         initToolBar()
         initMenu()
         initTextArea()
-        initNote(_owner, _position, _width, _height)
+        initNote(_owner)
     }
 
     private fun initToolBar() {
@@ -69,8 +62,8 @@ class Note(_owner: Window, val timestamp: LocalDateTime, _title: String, _conten
         // Bind the stage's title to note's title
         titleProperty().bindBidirectional(toolBar.title.textProperty())
         toolBar.title.textProperty().addListener { 
-            _, oldTitle, newTitle ->
-            saveNoteState("Title", oldTitle, newTitle)
+            _, _, newTitle ->
+            saveNoteData("Title", newTitle, String::class.java)
         }
     }
 
@@ -79,7 +72,7 @@ class Note(_owner: Window, val timestamp: LocalDateTime, _title: String, _conten
         menu.newItem.setOnAction { Note(owner).show() }
 
         menu.deleteItem.setOnAction { 
-            FileUtil.deleteNote(this)
+            FileUtil.deleteNoteData(noteData)
             close()
         }
 
@@ -108,62 +101,72 @@ class Note(_owner: Window, val timestamp: LocalDateTime, _title: String, _conten
     }
 
     private fun initTextArea() {
-        root.textArea.lookup(".web-view")
+        val textArea: RichTextArea = root.textArea
+        textArea.lookup(".web-view")
             .focusedProperty()
             .addListener { 
                 _, _, isFocused -> 
                 if (!isFocused) {
-                    saveNoteState("Contents", "Hide", "Hide")
+                    saveNoteData("Contents", textArea.contents, String::class.java)
                 }
         }
     }
 
-    private fun initNote(_owner: Window, _position: Pair<Double, Double>, _width: Double, _height: Double) {
-        val scene: Scene = Scene(root, _width, _height, Color.TRANSPARENT)
+    private fun initNote(_owner: Window) {
+        val scene: Scene = Scene(root)
         scene.getStylesheets().add("/app/crazynote.css")
         scene.getStylesheets().add(colorTheme.cssFilePath)
 
         // Set initial position
-        setX(_position.first)
-        setY(_position.second)
+        x = noteData.x
+        y = noteData.y
+        width = noteData.width
+        height = noteData.height
 
         // If the note's position was changed, then save file
         xProperty().addListener {
-            _, oldX, newX ->
-            saveNoteState("X", oldX, newX)
+            _, _, newX ->
+            saveNoteData("X", newX, Double::class.java)
         }
         yProperty().addListener {
-            _, oldY, newY ->
-            saveNoteState("Y", oldY, newY)
+            _, _, newY ->
+            saveNoteData("Y", newY, Double::class.java)
         }
 
         // If the note's size was changed, then save file
         widthProperty().addListener {
-            _, oldWidth, newWidth ->
-            saveNoteState("Width", oldWidth, newWidth)
+            _, _, newWidth ->
+            saveNoteData("Width", newWidth, Double::class.java)
         }
         heightProperty().addListener {
-            _, oldHeight, newHeight ->
-            saveNoteState("Height", oldHeight, newHeight)
+            _, _, newHeight ->
+            saveNoteData("Height", newHeight, Double::class.java)
         }
 
         initOwner(_owner)
-        initStyle(StageStyle.TRANSPARENT)
         setScene(scene)
 
         // Add resize function
         ResizeHelper.addResizeListener(this)
     }
 
-    private fun saveNoteState(property: String, oldValue: Any, newValue: Any) {
-        println("Update $property: $oldValue -> $newValue")
-        FileUtil.saveNote(this)
+    private fun saveNoteData(property: String, newValue: Any, vararg parameterTypes: Class<*>) {
+        val setMethod: Method = noteData::class.java.getMethod("set$property", *parameterTypes)
+        setMethod.invoke(noteData, newValue)
+        FileUtil.saveNoteData(noteData)
     }
 }
 
-private fun getScreenCnenter(width: Double, height: Double): Pair<Double, Double> {
+data class NoteData(var width: Double = 300.0, var height: Double = 300.0, var x: Double = getScreenCnenterX(width), var y: Double = getScreenCnenterY(height), val timestamp: LocalDateTime = LocalDateTime.now(), var title: String = "Title", var contents: String = "{\"ops\":[{\"insert\":\"Some Text\\\\n\"}]}", var colorTheme: ColorTheme = ColorTheme.YELLOW, var isVisible: Boolean = true): Serializable
+
+private fun getScreenCnenterX(width: Double): Double {
     val screenBounds: Rectangle2D = Screen.getPrimary().getVisualBounds()
     val centerX: Double = (screenBounds.getWidth() - width) / 2
+    return centerX
+}
+
+private fun getScreenCnenterY(height: Double): Double {
+    val screenBounds: Rectangle2D = Screen.getPrimary().getVisualBounds()
     val centerY: Double = (screenBounds.getHeight() - height) / 2
-    return Pair(centerX, centerY)
+    return centerY
 }

@@ -8,7 +8,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.*;
 import javafx.stage.Window;
-import kotlin.Pair;
 
 public class FileUtil {
     
@@ -28,67 +27,45 @@ public class FileUtil {
 
     private FileUtil() {}
 
-    public static void saveNote(Note note) {
-        Path filePath = getNoteFilePath(note);
+    public static void saveNoteData(NoteData noteData) {
+        Path filePath = getNoteFilePath(noteData);
 
         try(ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(filePath))) {
-            out.writeObject(note.getTimestamp());
-            out.writeObject(note.getTitle());
-            out.writeObject(note.getContents());
-            out.writeObject(note.getColorTheme().toString());
-            out.writeBoolean(note.isVisible());
-            out.writeDouble(note.getPosition().getFirst());
-            out.writeDouble(note.getPosition().getSecond());
-            out.writeDouble(note.getWidth());
-            out.writeDouble(note.getHeight());
-            
+            out.writeObject(noteData);
         } catch(IOException e){
             e.printStackTrace();
         }
     }
 
-    public static void deleteNote(Note note) {
+    public static void deleteNoteData(NoteData noteData) {
         try {
-            Path filePath = getNoteFilePath(note);
+            Path filePath = getNoteFilePath(noteData);
             Files.deleteIfExists(filePath);
-
         } catch(IOException e){
             e.printStackTrace();
         }
     }
 
-    public static List<Note> getNotes(Window owner) {
-        List<Note> notes = new ArrayList<>();
+    public static List<NoteData> getNoteDatas() {
+        List<NoteData> noteDatas = new ArrayList<>();
 
         try(DirectoryStream<Path> stream = Files.newDirectoryStream(SAVE_PATH, "Note*")) {
-            notes = asStream(stream.iterator()).map(path -> {
-                Note note = null;
+            noteDatas = asStream(stream.iterator()).map(path -> {
+                NoteData noteData = null;
 
                 try(ObjectInputStream in = new ObjectInputStream(Files.newInputStream(path))) {
-                    LocalDateTime timestamp = (LocalDateTime)in.readObject();
-                    String title = (String)in.readObject();
-                    String contents = (String)in.readObject();
-                    ColorTheme colorTheme = ColorTheme.valueOf(((String)in.readObject()).toUpperCase());
-                    boolean isVisible = in.readBoolean();
-                    double x = in.readDouble();
-                    double y = in.readDouble();
-                    double width = in.readDouble();
-                    double height = in.readDouble();
-
-                    note = new Note(owner, timestamp, title, contents, colorTheme, isVisible, new Pair<Double, Double>(x, y), width, height);
-
+                    noteData = (NoteData)in.readObject();
                 } catch(IOException | ClassNotFoundException e){
                     e.printStackTrace();
                 }
+                return noteData;
 
-                return note;
             }).collect(Collectors.toList());
-
         } catch(IOException e){
             e.printStackTrace();
         }
 
-        return notes;
+        return noteDatas;
     }
 
     private static Path getSaveFilePath(String dir) {
@@ -103,7 +80,6 @@ public class FileUtil {
             }
 
             savePath = codeSource.resolve(dir);
-
         } catch(URISyntaxException e){
             e.printStackTrace();
         }
@@ -111,9 +87,9 @@ public class FileUtil {
         return savePath;
     }
 
-    private static Path getNoteFilePath(Note note) {
+    private static Path getNoteFilePath(NoteData noteData) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuuMMddHHmmssSSS");
-        String fileName = "Note" + note.getTimestamp().format(formatter);
+        String fileName = "Note" + noteData.getTimestamp().format(formatter);
         Path filePath = SAVE_PATH.resolve(fileName);
 
         return filePath;
@@ -124,7 +100,6 @@ public class FileUtil {
     }
 
     private static <T> Stream<T> asStream(Iterator<T> sourceIterator, boolean parallel) {
-
         Iterable<T> iterable = () -> sourceIterator;
         return StreamSupport.stream(iterable.spliterator(), parallel);
     }
