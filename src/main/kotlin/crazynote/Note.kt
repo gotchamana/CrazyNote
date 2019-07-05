@@ -69,10 +69,10 @@ class Note @JvmOverloads constructor(_owner: Window, val noteData: NoteData = No
 
     private fun initMenu() {
         val menu: DropDownMenu = root.toolBar.menu
-        menu.newItem.setOnAction { Note(owner).show() }
+        menu.newItem.setOnAction { NoteManager.getNewNote(owner).show() }
 
         menu.deleteItem.setOnAction { 
-            FileUtil.deleteNoteData(noteData)
+            NoteManager.deleteNote(this);
             close()
         }
 
@@ -117,7 +117,7 @@ class Note @JvmOverloads constructor(_owner: Window, val noteData: NoteData = No
         scene.getStylesheets().add("/app/crazynote.css")
         scene.getStylesheets().add(colorTheme.cssFilePath)
 
-        // Set initial position
+        // Set initial position and size
         x = noteData.x
         y = noteData.y
         width = noteData.width
@@ -153,7 +153,8 @@ class Note @JvmOverloads constructor(_owner: Window, val noteData: NoteData = No
     private fun saveNoteData(property: String, newValue: Any, vararg parameterTypes: Class<*>) {
         val setMethod: Method = noteData::class.java.getMethod("set$property", *parameterTypes)
         setMethod.invoke(noteData, newValue)
-        FileUtil.saveNoteData(noteData)
+        // FileUtil.saveNoteData(noteData)
+        NoteManager.saveNote(this)
     }
 }
 

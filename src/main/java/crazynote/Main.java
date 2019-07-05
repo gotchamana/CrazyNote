@@ -14,10 +14,9 @@ public class Main extends Application {
         initSystemTray(stage);
         hidePrimaryStage(stage);
 
-        FileUtil.getNoteDatas()
+        NoteManager.getNotes(stage)
             .stream()
-            .filter(NoteData::isVisible)
-            .map(data -> new Note(stage, data))
+            .filter(note -> note.getNoteData().isVisible())
             .forEach(Stage::show);
     }
 
@@ -57,24 +56,44 @@ public class Main extends Application {
                 System.out.println("Auto Start");
             } else {
             }
-        }));
+        })).setShortcut('s');
 
         mainMenu.add(new MenuItem("New Note", e -> {
-            Platform.runLater(() -> new Note(stage).show());
-        }));
+            Platform.runLater(() -> NoteManager.getNewNote(stage).show());
+        })).setShortcut('n');
+
+        mainMenu.add(new Separator());
+
+        mainMenu.add(new MenuItem("Bring All Notes Forwards", e -> {
+            Platform.runLater(() -> {
+                NoteManager.getNotes(stage)
+                    .stream()
+                    .forEach(Stage::toFront);
+            });
+        })).setShortcut('f');
+
+        mainMenu.add(new MenuItem("Bring All Notes Backwards", e -> {
+            Platform.runLater(() -> {
+                NoteManager.getNotes(stage)
+                    .stream()
+                    .forEach(Stage::toBack);
+            });
+        })).setShortcut('b');
+
+        mainMenu.add(new Separator());
 
         mainMenu.add(new MenuItem("Manage", e -> {
             Platform.runLater(() -> System.out.println("Manage"));
-        }));
+        })).setShortcut('m');
 
         mainMenu.add(new MenuItem("About", e -> {
             Platform.runLater(() -> System.out.println("About"));
-        }));
+        })).setShortcut('a');
 
         mainMenu.add(new MenuItem("Exit", e -> {
             systemTray.shutdown();
             Platform.runLater(() -> stage.close());
-        }));
+        })).setShortcut('e');
     }
 
     private void hidePrimaryStage(Stage stage) {
