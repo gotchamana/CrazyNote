@@ -4,7 +4,7 @@ import crazynote.control.Note;
 import crazynote.control.NoteKt;
 import crazynote.util.*;
 import dorkbox.systemTray.*;
-import java.util.ResourceBundle;
+import java.util.*;
 import javafx.application.*;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -13,7 +13,6 @@ import javafx.scene.layout.Region;
 import javafx.stage.*;
 import jfxtras.styles.jmetro8.JMetro;
 import org.apache.log4j.BasicConfigurator;
-import java.util.Locale;
 
 public class Main extends Application {
 
@@ -23,11 +22,7 @@ public class Main extends Application {
     public void start(Stage stage) {
         initSystemTray(stage);
         hidePrimaryStage(stage);
-
-        NoteManager.getNotes(stage)
-            .stream()
-            .filter(Note::isVisible)
-            .forEach(Stage::show);
+        showNote(stage);
     }
 
     public static void main(String[] args) {
@@ -146,5 +141,16 @@ public class Main extends Application {
         stage.setX(Double.MAX_VALUE);
         stage.setY(Double.MAX_VALUE);
         stage.show();
+    }
+
+    private void showNote(Stage stage) {
+        List<Note> notes = NoteManager.getNotes(stage);
+        if (notes.isEmpty()) {
+            NoteManager.getNewNote(stage).show();
+        } else {
+            notes.stream()
+                .filter(Note::isVisible)
+                .forEach(Stage::show);
+        }
     }
 }

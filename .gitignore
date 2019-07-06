@@ -8,3 +8,4 @@ build
 *.swp
 
 src/main/resources/richTextArea/examples
+release
