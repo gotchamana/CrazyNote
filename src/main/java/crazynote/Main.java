@@ -2,18 +2,22 @@ package crazynote;
 
 import crazynote.control.Note;
 import crazynote.control.NoteKt;
-import crazynote.util.NoteManager;
+import crazynote.util.*;
 import dorkbox.systemTray.*;
+import java.util.ResourceBundle;
 import javafx.application.*;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.stage.*;
-import org.apache.log4j.BasicConfigurator;
 import javafx.scene.image.ImageView;
-import jfxtras.styles.jmetro8.JMetro;
 import javafx.scene.layout.Region;
+import javafx.stage.*;
+import jfxtras.styles.jmetro8.JMetro;
+import org.apache.log4j.BasicConfigurator;
+import java.util.Locale;
 
 public class Main extends Application {
+
+    private ResourceBundle resource = FileUtil.getResourceBundle();
 
     @Override
     public void start(Stage stage) {
@@ -48,13 +52,13 @@ public class Main extends Application {
 
         Menu mainMenu = systemTray.getMenu();
 
-        mainMenu.add(new MenuItem("New Note", e -> {
+        mainMenu.add(new MenuItem(resource.getString("crazynote.systemtray.new"), e -> {
             Platform.runLater(() -> NoteManager.getNewNote(stage).show());
         })).setShortcut('n');
 
         mainMenu.add(new Separator());
 
-        mainMenu.add(new MenuItem("Show All Notes", e -> {
+        mainMenu.add(new MenuItem(resource.getString("crazynote.systemtray.show"), e -> {
             Platform.runLater(() -> {
                 NoteManager.getNotes(stage)
                     .stream()
@@ -63,7 +67,7 @@ public class Main extends Application {
             });
         })).setShortcut('s');
 
-        mainMenu.add(new MenuItem("Hide All Notes", e -> {
+        mainMenu.add(new MenuItem(resource.getString("crazynote.systemtray.hide"), e -> {
             Platform.runLater(() -> {
                 NoteManager.getNotes(stage)
                     .stream()
@@ -74,7 +78,7 @@ public class Main extends Application {
 
         mainMenu.add(new Separator());
 
-        mainMenu.add(new MenuItem("Bring All Notes Forwards", e -> {
+        mainMenu.add(new MenuItem(resource.getString("crazynote.systemtray.forwards"), e -> {
             Platform.runLater(() -> {
                 NoteManager.getNotes(stage)
                     .stream()
@@ -82,7 +86,7 @@ public class Main extends Application {
             });
         })).setShortcut('f');
 
-        mainMenu.add(new MenuItem("Bring All Notes Backwards", e -> {
+        mainMenu.add(new MenuItem(resource.getString("crazynote.systemtray.backwards"), e -> {
             Platform.runLater(() -> {
                 NoteManager.getNotes(stage)
                     .stream()
@@ -92,14 +96,14 @@ public class Main extends Application {
 
         mainMenu.add(new Separator());
 
-        /* mainMenu.add(new Checkbox("Auto Start", e -> {
+        /* mainMenu.add(new Checkbox(resource.getString("crazynote.systemtray.autostart"), e -> {
             if (((Checkbox)e.getSource()).getChecked()) {
                 System.out.println("Auto Start");
             } else {
             }
         })); */
 
-        mainMenu.add(new MenuItem("About", e -> {
+        mainMenu.add(new MenuItem(resource.getString("crazynote.systemtray.about"), e -> {
             Platform.runLater(() -> {
                 stage.requestFocus();
 
@@ -114,7 +118,7 @@ public class Main extends Application {
 
         mainMenu.add(new Separator());
 
-        mainMenu.add(new MenuItem("Exit", e -> {
+        mainMenu.add(new MenuItem(resource.getString("crazynote.systemtray.exit"), e -> {
             systemTray.shutdown();
             Platform.runLater(() -> stage.close());
         })).setShortcut('e');
@@ -125,9 +129,9 @@ public class Main extends Application {
         new JMetro(JMetro.Style.LIGHT).applyTheme(dialog.getDialogPane());
         dialog.initOwner(stage);
         dialog.initStyle(StageStyle.UTILITY);
-        dialog.setTitle("About CrazyNote");
-        dialog.setHeaderText("CrazyNote 0.9");
-        dialog.setContentText("A simple and powerful sticky note");
+        dialog.setTitle(resource.getString("crazynote.dialog.abouttitle"));
+        dialog.setHeaderText(resource.getString("crazynote.dialog.aboutheadertext"));
+        dialog.setContentText(resource.getString("crazynote.dialog.aboutcontenttext"));
         dialog.setGraphic(new ImageView(getClass().getResource("/app/icon/icon-64x64.png").toExternalForm()));
 
         return dialog;

@@ -1,5 +1,8 @@
 package crazynote;
 
+import crazynote.util.FileUtil;
+import java.util.ResourceBundle;
+
 public enum ColorTheme {
 
     YELLOW("#ffeb85", "#fff3ac", "/app/theme/yellow.css"),
@@ -9,6 +12,7 @@ public enum ColorTheme {
     BLUE("#b7dfff", "#cde9ff", "/app/theme/blue.css"),
     BEIGE("#e5e5e5", "#f9f9f9", "/app/theme/beige.css");
 
+    private ResourceBundle resource = FileUtil.getResourceBundle();
     private String code1, code2, cssFilePath;
 
     private ColorTheme(String code1, String code2, String cssFilePath) {
@@ -31,7 +35,8 @@ public enum ColorTheme {
 
     @Override
     public String toString() {
-        return capitalize(super.toString().toLowerCase());
+        // return capitalize(super.toString().toLowerCase());
+        return resource.getString("crazynote.control.menuitem." + super.toString().toLowerCase());
     }
 
     private String capitalize(String word) {

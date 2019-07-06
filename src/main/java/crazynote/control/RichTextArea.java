@@ -1,9 +1,10 @@
 package crazynote.control;
 
 import crazynote.ColorTheme;
+import crazynote.util.FileUtil;
 import java.io.*;
 import java.nio.file.*;
-import java.util.Base64;
+import java.util.*;
 import javafx.concurrent.Worker;
 import javafx.scene.layout.Region;
 import javafx.scene.web.*;
@@ -11,6 +12,7 @@ import javafx.stage.FileChooser;
 import netscape.javascript.JSObject;
 
 public class RichTextArea extends Region {
+    private ResourceBundle resource = FileUtil.getResourceBundle();
     private WebView browser;
     private WebEngine engine;
 
@@ -78,13 +80,9 @@ public class RichTextArea extends Region {
 
     private FileChooser createFileChooser() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Choose a image...");
+        fileChooser.setTitle(resource.getString("crazynote.control.filechooser.title"));
         fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-        fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Image file", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.bmp"));
+        fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter(resource.getString("crazynote.control.filechooser.extensionfilter"), "*.png", "*.jpg", "*.jpeg", "*.gif", "*.bmp"));
         return fileChooser;
-    }
-
-    public void log(Object obj) {
-        System.out.println(obj);
     }
 }

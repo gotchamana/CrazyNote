@@ -5,15 +5,18 @@ import crazynote.util.*;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
+import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.*;
 import javafx.stage.*;
-import kotlin.properties.Delegates;
 import jfxtras.styles.jmetro8.JMetro;
+import kotlin.properties.Delegates;
 
 class Note @JvmOverloads constructor(_owner: Window, val noteData: NoteData = NoteData()): Stage(StageStyle.TRANSPARENT) {
+
+    private val resource: ResourceBundle = FileUtil.getResourceBundle()
 
     private var colorTheme: ColorTheme by Delegates.observable(noteData.colorTheme) {
         _, _, newColorTheme ->
@@ -76,8 +79,16 @@ class Note @JvmOverloads constructor(_owner: Window, val noteData: NoteData = No
         menu.newItem.setOnAction { NoteManager.getNewNote(owner).show() }
 
         menu.deleteItem.setOnAction { 
-            NoteManager.deleteNote(this);
-            close()
+            Platform.runLater {
+                val dialog: Alert = createDeleteDialog()
+
+                dialog.showAndWait()
+                    .filter { it == ButtonType.YES }
+                    .ifPresent {
+                        NoteManager.deleteNote(this)
+                        close()
+                    }
+            }
         }
 
         menu.hideItem.setOnAction { isVisible = false }
@@ -101,14 +112,14 @@ class Note @JvmOverloads constructor(_owner: Window, val noteData: NoteData = No
     private fun initTextArea() {
         val textArea: RichTextArea = root.textArea
         textArea.lookup(".web-view")
-            .focusedProperty()
-            .addListener { 
-                _, _, isFocused -> 
+        .focusedProperty()
+        .addListener { 
+            _, _, isFocused -> 
                 if (!isFocused) {
                     saveNoteData("Contents", textArea.contents, String::class.java)
                 }
+            }
         }
-    }
 
     private fun initNote(_owner: Window) {
         val scene: Scene = Scene(root)
@@ -124,21 +135,21 @@ class Note @JvmOverloads constructor(_owner: Window, val noteData: NoteData = No
         // If the note's position was changed, then save file
         xProperty().addListener {
             _, _, newX ->
-            saveNoteData("X", newX, Double::class.java)
+                saveNoteData("X", newX, Double::class.java)
         }
         yProperty().addListener {
             _, _, newY ->
-            saveNoteData("Y", newY, Double::class.java)
+                saveNoteData("Y", newY, Double::class.java)
         }
 
         // If the note's size was changed, then save file
         widthProperty().addListener {
             _, _, newWidth ->
-            saveNoteData("Width", newWidth, Double::class.java)
+                saveNoteData("Width", newWidth, Double::class.java)
         }
         heightProperty().addListener {
             _, _, newHeight ->
-            saveNoteData("Height", newHeight, Double::class.java)
+                saveNoteData("Height", newHeight, Double::class.java)
         }
 
         initOwner(_owner)
@@ -154,20 +165,31 @@ class Note @JvmOverloads constructor(_owner: Window, val noteData: NoteData = No
         NoteManager.saveNote(this)
     }
 
+    private fun createDeleteDialog(): Alert {
+        val dialog: Alert = Alert(Alert.AlertType.WARNING, resource.getString("crazynote.dialog.deletecontenttext"), ButtonType.YES, ButtonType.NO)
+        JMetro(JMetro.Style.LIGHT).applyTheme(dialog.getDialogPane())
+        dialog.initOwner(this)
+        dialog.initStyle(StageStyle.UTILITY)
+        dialog.setTitle(resource.getString("crazynote.dialog.deletetitle"))
+        dialog.setHeaderText(null)
+
+        return dialog
+    }
+
     private fun createRenameDialog(): TextInputDialog {
         val dialog: TextInputDialog = TextInputDialog(title)
         JMetro(JMetro.Style.LIGHT).applyTheme(dialog.getDialogPane())
         dialog.initOwner(this)
         dialog.initStyle(StageStyle.UTILITY)
-        dialog.setTitle("Rename")
-        dialog.setHeaderText("Enter the name")
+        dialog.setTitle(resource.getString("crazynote.dialog.renametitle"))
+        dialog.setHeaderText(resource.getString("crazynote.dialog.renameheadertext"))
         dialog.setGraphic(null)
 
         return dialog
     }
 }
 
-data class NoteData(var width: Double = 300.0, var height: Double = 300.0, var x: Double = getScreenCnenterX(width), var y: Double = getScreenCnenterY(height), val timestamp: LocalDateTime = LocalDateTime.now(), var title: String = "Title", var contents: String = "{\"ops\":[{\"insert\":\"Some Text\\\\n\"}]}", var colorTheme: ColorTheme = ColorTheme.YELLOW, var isVisible: Boolean = true): Serializable
+data class NoteData(var width: Double = 300.0, var height: Double = 300.0, var x: Double = getScreenCnenterX(width), var y: Double = getScreenCnenterY(height), val timestamp: LocalDateTime = LocalDateTime.now(), var title: String = "", var contents: String = "{\"ops\":[{\"insert\":\"\\\\n\"}]}", var colorTheme: ColorTheme = ColorTheme.YELLOW, var isVisible: Boolean = true): Serializable
 
 public fun getScreenCnenterX(width: Double): Double {
     val screenBounds: Rectangle2D = Screen.getPrimary().getVisualBounds()

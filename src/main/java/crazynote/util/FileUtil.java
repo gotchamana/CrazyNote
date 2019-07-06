@@ -12,10 +12,12 @@ import javafx.stage.Window;
 
 public class FileUtil {
     
-    public final static Path SAVE_PATH;
+    private final static Path SAVE_PATH;
+    private final static ResourceBundle BUNDLE;
 
     static {
         SAVE_PATH = getSaveFilePath("data");
+        BUNDLE = ResourceBundle.getBundle("app/resourceBundle/bundle");
 
         try {
             if (!Files.exists(SAVE_PATH)) {
@@ -67,6 +69,10 @@ public class FileUtil {
         }
 
         return noteDatas;
+    }
+
+    public static ResourceBundle getResourceBundle() {
+        return BUNDLE;
     }
 
     private static Path getSaveFilePath(String dir) {

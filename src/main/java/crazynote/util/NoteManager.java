@@ -1,9 +1,9 @@
 package crazynote.util;
 
 import crazynote.control.Note;
-import javafx.stage.Window;
 import java.util.*;
 import java.util.stream.Collectors;
+import javafx.stage.Window;
 
 public class NoteManager {
 

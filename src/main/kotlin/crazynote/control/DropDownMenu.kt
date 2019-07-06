@@ -1,6 +1,8 @@
 package crazynote.control
 
 import crazynote.ColorTheme;
+import crazynote.util.FileUtil;
+import java.util.ResourceBundle;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -9,13 +11,15 @@ import org.kordamp.ikonli.openiconic.Openiconic;
 
 class DropDownMenu: MenuButton() {
 
-    val newItem: MenuItem = MenuItem("New")
-    val deleteItem: MenuItem = MenuItem("Delete")
-    val hideItem: MenuItem = MenuItem("Hide")
-    val separator: MenuItem = SeparatorMenuItem()
-    val renameItem: MenuItem = MenuItem("Rename")
+    private val resource: ResourceBundle = FileUtil.getResourceBundle()
 
-    val colorMenu: Menu = Menu("Select Color")
+    val newItem: MenuItem = MenuItem(resource.getString("crazynote.control.menuitem.new"))
+    val deleteItem: MenuItem = MenuItem(resource.getString("crazynote.control.menuitem.delete"))
+    val hideItem: MenuItem = MenuItem(resource.getString("crazynote.control.menuitem.hide"))
+    val separator: MenuItem = SeparatorMenuItem()
+    val renameItem: MenuItem = MenuItem(resource.getString("crazynote.control.menuitem.rename"))
+
+    val colorMenu: Menu = Menu(resource.getString("crazynote.control.menuitem.color"))
     val yellowTheme: MenuItem = ColorMenuItem(ColorTheme.YELLOW)
     val greenTheme: MenuItem = ColorMenuItem(ColorTheme.GREEN)
     val pinkTheme: MenuItem = ColorMenuItem(ColorTheme.PINK)
