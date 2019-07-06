@@ -1,5 +1,6 @@
-package crazynote;
+package crazynote.control;
 
+import crazynote.ColorTheme;
 import java.io.*;
 import java.nio.file.*;
 import java.util.Base64;

@@ -1,4 +1,4 @@
-package crazynote;
+package crazynote.util;
 
 import javafx.collections.ObservableList;
 import javafx.event.*;

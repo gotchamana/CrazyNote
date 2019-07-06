@@ -1,5 +1,6 @@
-package crazynote
+package crazynote.control
 
+import crazynote.ColorTheme;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -13,7 +14,6 @@ class DropDownMenu: MenuButton() {
     val hideItem: MenuItem = MenuItem("Hide")
     val separator: MenuItem = SeparatorMenuItem()
     val renameItem: MenuItem = MenuItem("Rename")
-    val settingItem: MenuItem = MenuItem("Manage")
 
     val colorMenu: Menu = Menu("Select Color")
     val yellowTheme: MenuItem = ColorMenuItem(ColorTheme.YELLOW)
@@ -27,6 +27,6 @@ class DropDownMenu: MenuButton() {
         setContentDisplay(ContentDisplay.GRAPHIC_ONLY)
         setGraphic(FontIcon(Openiconic.CHEVRON_BOTTOM))
         colorMenu.getItems().addAll(yellowTheme, greenTheme, pinkTheme, purpleTheme, blueTheme, beigeTheme)
-        getItems().addAll(newItem, deleteItem, hideItem, separator, renameItem, colorMenu, settingItem)
+        getItems().addAll(newItem, deleteItem, hideItem, separator, renameItem, colorMenu)
     }
 }

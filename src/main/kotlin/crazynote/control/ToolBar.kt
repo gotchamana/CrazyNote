@@ -1,4 +1,4 @@
-package crazynote
+package crazynote.control
 
 import javafx.geometry.HPos;
 import javafx.scene.control.Label;

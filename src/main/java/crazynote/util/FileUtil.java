@@ -1,5 +1,6 @@
-package crazynote;
+package crazynote.util;
 
+import crazynote.control.NoteData;
 import java.io.*;
 import java.net.*;
 import java.nio.file.*;

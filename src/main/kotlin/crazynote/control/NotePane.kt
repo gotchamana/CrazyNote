@@ -1,5 +1,6 @@
-package crazynote
+package crazynote.control
 
+import crazynote.ColorTheme;
 import javafx.scene.layout.BorderPane;
 
 class NotePane(title: String, contents: String, colorTheme: ColorTheme): BorderPane() {

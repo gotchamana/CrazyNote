@@ -1,5 +1,7 @@
-package crazynote
+package crazynote.control
 
+import crazynote.ColorTheme;
+import crazynote.util.*;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
@@ -9,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.*;
 import kotlin.properties.Delegates;
+import jfxtras.styles.jmetro8.JMetro;
 
 class Note @JvmOverloads constructor(_owner: Window, val noteData: NoteData = NoteData()): Stage(StageStyle.TRANSPARENT) {
 
@@ -22,7 +25,7 @@ class Note @JvmOverloads constructor(_owner: Window, val noteData: NoteData = No
         saveNoteData("ColorTheme", newColorTheme, ColorTheme::class.java)
     }
 
-    private var isVisible: Boolean by Delegates.observable(noteData.isVisible) {
+    var isVisible: Boolean by Delegates.observable(noteData.isVisible) {
         _, _, newVisible ->
         if(newVisible) show() else close()
 
@@ -35,6 +38,7 @@ class Note @JvmOverloads constructor(_owner: Window, val noteData: NoteData = No
     init {
         root = NotePane(noteData.title, noteData.contents, noteData.colorTheme)
         root.getStyleClass().add("note")
+        JMetro(JMetro.Style.LIGHT).applyTheme(root)
 
         initToolBar()
         initMenu()
@@ -80,14 +84,8 @@ class Note @JvmOverloads constructor(_owner: Window, val noteData: NoteData = No
 
         menu.renameItem.setOnAction {
             Platform.runLater {
-                val dialog: TextInputDialog = TextInputDialog()
-                dialog.initOwner(this)
-                dialog.initStyle(StageStyle.UTILITY)
-                dialog.setTitle("Name")
-                dialog.setHeaderText("Enter the name")
-                dialog.setGraphic(null)
-
-                title = dialog.showAndWait().orElse("")
+                val dialog: TextInputDialog = createRenameDialog()
+                title = dialog.showAndWait().orElse(title)
             }
         }
 
@@ -153,20 +151,31 @@ class Note @JvmOverloads constructor(_owner: Window, val noteData: NoteData = No
     private fun saveNoteData(property: String, newValue: Any, vararg parameterTypes: Class<*>) {
         val setMethod: Method = noteData::class.java.getMethod("set$property", *parameterTypes)
         setMethod.invoke(noteData, newValue)
-        // FileUtil.saveNoteData(noteData)
         NoteManager.saveNote(this)
+    }
+
+    private fun createRenameDialog(): TextInputDialog {
+        val dialog: TextInputDialog = TextInputDialog(title)
+        JMetro(JMetro.Style.LIGHT).applyTheme(dialog.getDialogPane())
+        dialog.initOwner(this)
+        dialog.initStyle(StageStyle.UTILITY)
+        dialog.setTitle("Rename")
+        dialog.setHeaderText("Enter the name")
+        dialog.setGraphic(null)
+
+        return dialog
     }
 }
 
 data class NoteData(var width: Double = 300.0, var height: Double = 300.0, var x: Double = getScreenCnenterX(width), var y: Double = getScreenCnenterY(height), val timestamp: LocalDateTime = LocalDateTime.now(), var title: String = "Title", var contents: String = "{\"ops\":[{\"insert\":\"Some Text\\\\n\"}]}", var colorTheme: ColorTheme = ColorTheme.YELLOW, var isVisible: Boolean = true): Serializable
 
-private fun getScreenCnenterX(width: Double): Double {
+public fun getScreenCnenterX(width: Double): Double {
     val screenBounds: Rectangle2D = Screen.getPrimary().getVisualBounds()
     val centerX: Double = (screenBounds.getWidth() - width) / 2
     return centerX
 }
 
-private fun getScreenCnenterY(height: Double): Double {
+public fun getScreenCnenterY(height: Double): Double {
     val screenBounds: Rectangle2D = Screen.getPrimary().getVisualBounds()
     val centerY: Double = (screenBounds.getHeight() - height) / 2
     return centerY
