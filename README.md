@@ -22,9 +22,9 @@ A sticky note written in Java and Kotlin and use JavaFX WebView to embed a rich 
     ![bringForwardsBackwards](demo/bringForwardsBackwards.gif)
 
 ## Download
-- Windows(with JRE): [download]()
-- Linux(with JRE): [download]()
-- Jar file(only support Java 8): [download]()
+- Windows(74.1MB, with JRE): [download](https://github.com/gotchamana/CrazyNote/releases/download/v0.9/CrazyNote-windows64.zip)
+- Linux(80.4MB, with JRE): [download](https://github.com/gotchamana/CrazyNote/releases/download/v0.9/CrazyNote-linux64.zip)
+- Jar file(7.29MB, only support Java 8): [download](https://github.com/gotchamana/CrazyNote/releases/download/v0.9/CrazyNote-all.jar)
 
 ## Known Issues
 I almost test this program on Linux(Ubuntu 18.04), so I can't ensure that the following issues will occur on Windows. I just mark the platform where the issue happens. Please pay attention to it.
