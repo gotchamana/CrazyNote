@@ -1,11 +1,11 @@
 .note {
-    -fx-background-color: #f9f9f9;
+    -fx-background-color: #f5f5dc;
 }
 
 .tool-bar {
-    -fx-background-color: #e5e5e5;
+    -fx-background-color: #e0e094;
 }
 
 .menu-button {
-    -fx-background-color: #e5e5e5;
+    -fx-background-color: #e0e094;
 }

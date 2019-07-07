@@ -10,7 +10,7 @@ public enum ColorTheme {
     PINK("#ffbbdd", "#ffcce5", "/app/theme/pink.css"),
     PURPLE("#dbb7ff", "#e7cfff", "/app/theme/purple.css"),
     BLUE("#b7dfff", "#cde9ff", "/app/theme/blue.css"),
-    BEIGE("#e5e5e5", "#f9f9f9", "/app/theme/beige.css");
+    BEIGE("#e0e094", "#f5f5dc", "/app/theme/beige.css");
 
     private ResourceBundle resource = FileUtil.getResourceBundle();
     private String code1, code2, cssFilePath;
